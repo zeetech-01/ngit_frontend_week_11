@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="quiz-container">
+
+    <h1>Frontend Quiz</h1>
+
+    <div id="quiz-box">
+
+      <h2 id="question">Question text</h2>
+
+      <div id="options"></div>
+
+      <p id="feedback"></p>
+
+      <button id="nextBtn">Next</button>
+
+    </div>
+
+    <div id="result-box" class="hidden">
+      <h2 id="scoreText"></h2>
+      <button onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+
+  </div>
+
+  <script>
+    // QUESTIONS (ARRAY OF OBJECTS)
+const quiz = [
+  {
+    question: "What does HTML stand for?",
+    options: [
+      "HyperText Markup Language",
+      "Home Tool Markup Language",
+      "Hyperlinks Text Mark Language"
+    ],
+    answer: "HyperText Markup Language"
+  },
+  {
+    question: "What does CSS do?",
+    options: [
+      "Adds logic",
+      "Styles the website",
+      "Stores data"
+    ],
+    answer: "Styles the website"
+  },
+  {
+    question: "What is JavaScript used for?",
+    options: [
+      "Structure",
+      "Styling",
+      "Interactivity"
+    ],
+    answer: "Interactivity"
+  }
+];
+
+let currentIndex = 0;
+let score = 0;
+
+// LOAD QUESTION
+function loadQuestion() {
+  let q = quiz[currentIndex];
+
+  document.getElementById("question").textContent = q.question;
+
+  let optionsHTML = "";
+
+  q.options.forEach(option => {
+    optionsHTML += `
+      <label>
+        <input type="radio" name="quiz" value="${option}">
+        ${option}
+      </label><br>
+    `;
+  });
+
+  document.getElementById("options").innerHTML = optionsHTML;
+  document.getElementById("feedback").textContent = "";
+}
+
+loadQuestion();
+
+// NEXT BUTTON LOGIC
+document.getElementById("nextBtn").addEventListener("click", function () {
+
+  let selected = document.querySelector('input[name="quiz"]:checked');
+
+  // ❗ IF NO ANSWER SELECTED
+  if (!selected) {
+    alert("Please select an answer before continuing!");
+    return;
+  }
+
+  // CHECK ANSWER
+  if (selected.value === quiz[currentIndex].answer) {
+    document.getElementById("feedback").textContent = "Correct!";
+    document.getElementById("feedback").style.color = "green";
+    score++;
+  } else {
+    document.getElementById("feedback").textContent = "Wrong!";
+    document.getElementById("feedback").style.color = "red";
+  }
+
+  currentIndex++;
+
+  // NEXT QUESTION OR SHOW RESULT
+  setTimeout(() => {
+
+    if (currentIndex < quiz.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+
+  }, 800);
+
+});
+
+// SHOW RESULT
+function showResult() {
+  document.getElementById("quiz-box").style.display = "none";
+  document.getElementById("result-box").classList.remove("hidden");
+
+  document.getElementById("scoreText").textContent =
+    `You scored ${score} out of ${quiz.length}`;
+}
+
+// RESTART QUIZ
+function restartQuiz() {
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById("quiz-box").style.display = "block";
+  document.getElementById("result-box").classList.add("hidden");
+
+  loadQuestion();
+}
+  </script>
+</body>
+</html>
